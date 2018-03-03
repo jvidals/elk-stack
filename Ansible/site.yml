@@ -1,0 +1,7 @@
+---
+
+- import_playbook: common.yml
+- import_playbook: elasticsearch.yml
+- import_playbook: kibana.yml
+- import_playbook: apache.yml
+- import_playbook: logstash.yml

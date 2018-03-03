@@ -1,0 +1,37 @@
+---
+
+- name: Install logstash
+  become: yes
+  become_method: sudo
+  yum:
+    name: logstash
+    state: present
+
+- name: Copy 01-syslog-input.conf
+  become: yes
+  become_method: sudo
+  template:
+    dest: /etc/logstash/conf.d/01-syslog-input.conf
+    src: files/01-syslog-input.conf
+
+- name: Copy 10-syslog.conf
+  become: yes
+  become_method: sudo
+  template:
+    dest: /etc/logstash/conf.d/10-syslog.conf
+    src: files/10-syslog.conf
+
+- name: Copy 30-lumberjack-output.conf
+  become: yes
+  become_method: sudo
+  template:
+    dest: /etc/logstash/conf.d/30-lumberjack-output.conf
+    src: files/30-lumberjack-output.conf
+
+- name: Restart logstash and enable
+  become: yes
+  become_method: sudo
+  service:
+    name: logstash
+    state: restarted
+    enabled: yes

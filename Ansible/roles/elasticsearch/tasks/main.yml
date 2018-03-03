@@ -1,0 +1,91 @@
+---
+
+- name: Elasticsearch repo public GPG key 
+  become: yes 
+  become_method: sudo
+  rpm_key:
+    state: present
+    key: http://packages.elastic.co/GPG-KEY-elasticsearch
+  
+- name: Add elasticsearch repo
+  become: yes 
+  become_method: sudo
+  yum_repository:
+    name: elasticsearch-6.x
+    description: Elasticsearch repository for 6.x packages 
+    baseurl: https://artifacts.elastic.co/packages/6.x/yum
+    gpgkey: http://packages.elastic.co/GPG-KEY-elasticsearch
+
+- name: Add curator 5 repo
+  become: yes 
+  become_method: sudo
+  yum_repository:
+    name: curator-5
+    description: CentOS/RHEL 7 repository for Elasticsearch Curator 5.x packages
+    baseurl: https://packages.elastic.co/curator/5/centos/7
+    gpgkey: https://packages.elastic.co/GPG-KEY-elasticsearch
+
+- name: install elasticsearch
+  become: yes 
+  become_method: sudo
+  yum:
+    name: elasticsearch
+    state: present
+
+- name: Copy elasticsearch config
+  become: yes
+  become_method: sudo
+  copy:
+    src: files/elasticsearch.yml
+    dest: /etc/elasticsearch/elasticsearch.yml
+    owner: root
+    group: elasticsearch
+
+- name: Set perms on /usr/share/elasticsearch
+  become: yes
+  become_method: sudo
+  file:
+    path: /usr/share/elasticsearch
+    state: directory
+    owner: elasticsearch
+    group: root
+
+- name: Restart and enable elasticsearch service
+  become: yes
+  become_method: sudo
+  service:
+    name: elasticsearch
+    state: started
+    enabled: yes
+
+- name: Install curator 5
+  become: yes
+  become_method: sudo
+  yum:
+    name: elasticsearch-curator
+    state: present
+
+- name: Copy curator_config.yml
+  become: yes
+  become_method: sudo
+  copy:
+    src: files/curator_config.yml
+    dest: /root/
+    mode: u+x
+
+- name: Copy delete-indices.yml
+  become: yes
+  become_method: sudo
+  copy:
+    src: files/delete-indices.yml
+    dest: /root/
+    mode: u+x
+
+- name: Crontab to delete old indicies
+  become: yes
+  become_method: sudo
+  cron:
+    name: "Crontab to delete old indicies"
+    job: "/bin/curator --config /root/curator_config.yml /root/delete-indices.yml"
+    minute: 0
+    hour: 0

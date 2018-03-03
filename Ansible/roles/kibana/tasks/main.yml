@@ -1,0 +1,32 @@
+---
+
+- name: Add kibana repo
+  become: yes
+  become_method: sudo
+  yum_repository:
+    name: kibana-6.x
+    description: Kibana repository for 6.x packages
+    baseurl: https://artifacts.elastic.co/packages/6.x/yum
+    gpgkey: http://packages.elastic.co/GPG-KEY-elasticsearch
+
+- name: Install kibana
+  become: yes
+  become_method: sudo
+  yum:
+    name: kibana
+    state: present
+
+- name: Copy kibana config
+  become: yes
+  become_method: sudo
+  copy:
+    src: files/kibana.yml
+    dest: /etc/kibana/kibana.yml
+
+- name: Start and enable the kibana service
+  become: yes
+  become_method: sudo
+  service:
+    name: kibana
+    state: started
+    enabled: yes

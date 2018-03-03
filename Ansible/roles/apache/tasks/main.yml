@@ -1,0 +1,23 @@
+---
+
+- name: Install apache
+  become: yes
+  become_method: sudo
+  yum:
+    name: httpd
+    state: present
+
+- name: Copy apache default-site.conf
+  become: yes
+  become_method: sudo
+  template:
+    src: files/default-site.conf
+    dest: /etc/httpd/conf.d/default-site.conf
+
+- name: Start and enable httpd
+  become: yes
+  become_method: sudo
+  service:
+    name: httpd
+    state: started
+    enabled: yes

@@ -1,0 +1,6 @@
+---
+
+- hosts: target
+  remote_user: ansible
+  roles:
+    - elasticsearch

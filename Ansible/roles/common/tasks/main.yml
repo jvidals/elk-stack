@@ -1,0 +1,14 @@
+---
+
+- name: Install Java OpenJDK
+  become: yes
+  become_method: sudo
+  yum:
+    name: java-1.8.0-openjdk
+    state: latest
+
+- name: Disable SELinux
+  become: yes
+  become_method: sudo
+  selinux:
+    state: disabled

@@ -1,0 +1,11 @@
+---
+
+# Remember, leave a key empty if there is no value.  None will be a string,
+# # not a Python "NoneType"
+ client:
+   hosts:
+     - 127.0.0.1
+   port: 9200
+   timeout: 30
+ logging:
+   loglevel: INFO
